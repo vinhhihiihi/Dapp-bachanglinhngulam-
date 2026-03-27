@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import "./App.css"; 
 
-const contractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
-
+const contractAddress = "0x3eDC27edC8F8e7e9AE51248E78cD153aBD2F9746";
 const abi = [
-  "function buyCoffee(string memory _name, string memory _message) public payable",
-  "function getMemos() public view returns (tuple(address from, uint256 timestamp, string name, string message)[])",
-  "function withdrawTips() public" 
+  "function buyCoffee(address payable _to, string memory _name, string memory _message) public payable",
+  "function getMemos() public view returns (tuple(address from, address to, uint256 timestamp, string name, string message)[])"
 ];
 
 function Home() {
@@ -51,40 +49,25 @@ function Home() {
     if (!ethers.isAddress(recipientAddress)) return alert("Địa chỉ ví không hợp lệ!");
     
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      
-      // Gửi tiền trực tiếp đến địa chỉ ví nhận ủng hộ
-      const tx = await signer.sendTransaction({
-        to: recipientAddress,
-        value: ethers.parseEther(amount),
-      });
+      const tx = await contractInstance.buyCoffee(
+        recipientAddress, 
+        name, 
+        message, 
+        { value: ethers.parseEther(amount) }
+      );
       
       alert("Đang xử lý giao dịch trên Blockchain. Vui lòng chờ...");
-      await tx.wait();
-      
-      // Ghi lại thông điệp vào contract
-      await contractInstance.buyCoffee(name, message, { value: 0 });
+      await tx.wait(); 
       
       alert("Cảm ơn bạn đã ủng hộ!");
-      loadMemos(contractInstance);
+      loadMemos(contractInstance); 
+      
       setName(""); 
       setMessage(""); 
       setRecipientAddress("");
     } catch (error) {
       console.error("Lỗi giao dịch:", error);
       alert("Lỗi giao dịch: " + error.message);
-    }
-  }
-
-  async function withdraw() {
-    if (!contractInstance) return alert("Vui lòng kết nối ví trước!");
-    try {
-      const tx = await contractInstance.withdrawTips();
-      await tx.wait();
-      alert("Rút tiền về ví Owner thành công!");
-    } catch (error) {
-      alert("Lỗi: Chỉ chủ dự án (Owner) mới có quyền rút tiền!");
     }
   }
 
