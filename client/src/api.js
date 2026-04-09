@@ -18,8 +18,11 @@ async function parseResponse(response) {
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
     ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
   });
 
   return parseResponse(response);
@@ -46,6 +49,50 @@ export async function createCreator(payload) {
   return request("/creators", {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+export async function createCreatorAsAdmin(payload, token) {
+  return request("/creators", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateCreatorAsAdmin(id, payload, token) {
+  return request(`/creators/${id}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteCreatorAsAdmin(id, token) {
+  return request(`/creators/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function adminLogin(username, password) {
+  return request("/admin/login", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+  });
+}
+
+export async function getAdminSession(token) {
+  return request("/admin/session", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 }
 

@@ -17,6 +17,14 @@ npm --prefix client install
 copy server\\.env.example server\\.env
 ```
 
+Admin credentials for `/admin` are read from `server/.env`:
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+ADMIN_TOKEN_SECRET=replace_with_a_strong_secret
+ADMIN_TOKEN_EXPIRES_SECONDS=43200
+```
+
 3. Start MongoDB locally, then seed data:
 ```bash
 npm run seed
@@ -41,6 +49,10 @@ Backend default: `http://localhost:4000`
 - `GET /api/creators`
 - `GET /api/creators/:id`
 - `POST /api/creators`
+- `PATCH /api/creators/:id`
+- `DELETE /api/creators/:id`
+- `POST /api/admin/login`
+- `GET /api/admin/session`
 - `POST /api/follow/:creatorId`
 - `DELETE /api/follow/:creatorId`
 - `POST /api/donate`
@@ -50,6 +62,7 @@ Backend default: `http://localhost:4000`
 
 - Landing animation grid with zig-zag column motion (infinite loop)
 - Creator profile page at `/creator/:id`
+- Admin page at `/admin` with login, create, search, edit, delete creator
 - Follow/Unfollow toggle persisted in DB
 - Donate form + MetaMask transaction via ethers.js
 - Donation message history per creator

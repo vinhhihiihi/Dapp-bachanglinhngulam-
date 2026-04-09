@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
+import { adminRouter } from "./routes/admin.js";
 import { creatorsRouter } from "./routes/creators.js";
 import { donateRouter } from "./routes/donate.js";
 import { donationsRouter } from "./routes/donations.js";
@@ -21,6 +22,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/creators", creatorsRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/follow", followRouter);
 app.use("/api/donate", donateRouter);
 app.use("/api/donations", donationsRouter);

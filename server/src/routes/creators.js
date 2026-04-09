@@ -1,6 +1,9 @@
 import { Router } from "express";
 import mongoose from "mongoose";
+import { requireAdminAuth } from "../auth/adminAuth.js";
 import { Creator } from "../models/Creator.js";
+import { Donation } from "../models/Donation.js";
+import { Follow } from "../models/Follow.js";
 import { getPaginationParams } from "../utils/pagination.js";
 
 const creatorsRouter = Router();
@@ -59,7 +62,7 @@ creatorsRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-creatorsRouter.post("/", async (req, res, next) => {
+creatorsRouter.post("/", requireAdminAuth, async (req, res, next) => {
   try {
     const { name, avatar, bio, walletAddress } = req.body;
 
@@ -82,6 +85,87 @@ creatorsRouter.post("/", async (req, res, next) => {
       return res.status(409).json({ message: "walletAddress already exists" });
     }
 
+    next(error);
+  }
+});
+
+creatorsRouter.patch("/:id", requireAdminAuth, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid creator id" });
+    }
+
+    const creator = await Creator.findById(id);
+    if (!creator) {
+      return res.status(404).json({ message: "Creator not found" });
+    }
+
+    const { name, avatar, bio, walletAddress } = req.body || {};
+    const hasUpdate =
+      typeof name === "string" ||
+      typeof avatar === "string" ||
+      typeof bio === "string" ||
+      typeof walletAddress === "string";
+
+    if (!hasUpdate) {
+      return res
+        .status(400)
+        .json({ message: "At least one of name, avatar, bio, walletAddress is required" });
+    }
+
+    if (typeof name === "string") {
+      creator.name = name.trim();
+    }
+
+    if (typeof avatar === "string") {
+      creator.avatar = avatar.trim();
+    }
+
+    if (typeof bio === "string") {
+      creator.bio = bio.trim();
+    }
+
+    if (typeof walletAddress === "string") {
+      creator.walletAddress = walletAddress.trim().toLowerCase();
+    }
+
+    if (!creator.name || !creator.avatar || !creator.walletAddress) {
+      return res
+        .status(400)
+        .json({ message: "name, avatar and walletAddress are required" });
+    }
+
+    await creator.save();
+    res.json(creator);
+  } catch (error) {
+    if (error?.code === 11000) {
+      return res.status(409).json({ message: "walletAddress already exists" });
+    }
+
+    next(error);
+  }
+});
+
+creatorsRouter.delete("/:id", requireAdminAuth, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid creator id" });
+    }
+
+    const creator = await Creator.findByIdAndDelete(id).lean();
+    if (!creator) {
+      return res.status(404).json({ message: "Creator not found" });
+    }
+
+    await Promise.all([
+      Follow.deleteMany({ creatorId: id }),
+      Donation.deleteMany({ creatorId: id }),
+    ]);
+
+    res.json({ message: "Creator deleted", creatorId: id });
+  } catch (error) {
     next(error);
   }
 });
