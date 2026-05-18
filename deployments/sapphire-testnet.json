@@ -1,0 +1,9 @@
+{
+  "network": "Oasis Sapphire Testnet",
+  "chainId": 23295,
+  "rpcUrl": "https://testnet.sapphire.oasis.io",
+  "contractName": "BuyMeACoffee",
+  "address": "0xe953d2663957e5D587ABbe2c37B9ddaaceD1A49c",
+  "deployer": "0xe44aFFB1152B7431cD411ed29CEA50bf265Fb4c0",
+  "deployedAt": "2026-05-17T18:25:59.647Z"
+}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ethers } from "ethers";
 import { Link } from "react-router-dom";
+import { ensureOasisSapphireTestnet } from "../lib/oasisSapphire";
 import "./QuickDonatePage.css";
 
 function shortAddress(address) {
@@ -36,6 +37,7 @@ export function QuickDonatePage() {
 
     setConnectingWallet(true);
     try {
+      await ensureOasisSapphireTestnet();
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
@@ -61,13 +63,14 @@ export function QuickDonatePage() {
     }
 
     if (!canSubmit) {
-      alert("Vui long nhap dung dia chi vi va so ETH.");
+      alert("Vui long nhap dung dia chi vi va so TEST.");
       return;
     }
 
     setSending(true);
     setTxHash("");
     try {
+      await ensureOasisSapphireTestnet();
       const provider = new ethers.BrowserProvider(window.ethereum);
       if (!walletAddress) {
         await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -97,12 +100,14 @@ export function QuickDonatePage() {
     <main className="quick-donate-page">
       <section className="quick-donate-card">
         <Link className="quick-back-link" to="/">
+          Ve huong dan
+        </Link>
+        <Link className="quick-back-link quick-back-link-secondary" to="/creators">
           Ve landing
         </Link>
         <h1>Donate nhanh cho vi bat ky</h1>
         <p className="quick-subtitle">
-          Dung cho creator chua co profile tren he thong. Nhap dia chi vi va gui ETH
-          truc tiep.
+          Gui TEST tren Oasis Sapphire Testnet den mot dia chi vi bat ky.
         </p>
 
         <div className="quick-wallet-row">
@@ -128,7 +133,7 @@ export function QuickDonatePage() {
             min="0.0001"
             step="0.0001"
             name="amount"
-            placeholder="So tien ETH"
+            placeholder="So tien TEST"
             value={form.amount}
             onChange={onChange}
             required
@@ -141,7 +146,7 @@ export function QuickDonatePage() {
             onChange={onChange}
           />
           <button type="submit" disabled={!canSubmit || sending}>
-            {sending ? "Dang gui..." : "Gui ETH"}
+            {sending ? "Dang gui..." : "Gui TEST"}
           </button>
         </form>
 

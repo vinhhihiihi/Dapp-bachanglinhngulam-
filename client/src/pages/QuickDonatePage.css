@@ -25,6 +25,11 @@
   padding: 8px 12px;
   display: inline-block;
   background: rgba(30, 41, 59, 0.8);
+  margin-right: 10px;
+}
+
+.quick-back-link-secondary {
+  color: #e2e8f0;
 }
 
 .quick-donate-card h1 {

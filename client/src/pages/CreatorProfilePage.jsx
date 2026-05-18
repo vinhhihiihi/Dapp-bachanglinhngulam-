@@ -10,6 +10,7 @@ import {
   unfollowCreator,
 } from "../api";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { ensureOasisSapphireTestnet } from "../lib/oasisSapphire";
 import "./CreatorProfilePage.css";
 
 const MAX_DONATIONS = 20;
@@ -115,6 +116,7 @@ export function CreatorProfilePage() {
 
     setConnectingWallet(true);
     try {
+      await ensureOasisSapphireTestnet();
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
@@ -146,7 +148,7 @@ export function CreatorProfilePage() {
               ...prev,
               followersCount: response.followersCount,
             }
-          : prev
+          : prev,
       );
     } catch (error) {
       alert(error.message || "Khong the cap nhat follow.");
@@ -166,7 +168,7 @@ export function CreatorProfilePage() {
 
     const amountNumber = Number(form.amount);
     if (Number.isNaN(amountNumber) || amountNumber <= 0) {
-      alert("So tien ETH khong hop le.");
+      alert("So tien TEST khong hop le.");
       return;
     }
 
@@ -177,8 +179,8 @@ export function CreatorProfilePage() {
 
     setSendingDonation(true);
     try {
+      await ensureOasisSapphireTestnet();
       const provider = new ethers.BrowserProvider(window.ethereum);
-      let signer;
 
       if (!walletAddress) {
         const accounts = await window.ethereum.request({
@@ -194,7 +196,7 @@ export function CreatorProfilePage() {
         }
       }
 
-      signer = await provider.getSigner();
+      const signer = await provider.getSigner();
       const senderAddress = (form.walletAddress || (await signer.getAddress())).trim();
 
       const tx = await signer.sendTransaction({
@@ -278,7 +280,7 @@ export function CreatorProfilePage() {
 
         <section className="creator-donate">
           <div className="donate-top">
-            <h2>Donate ETH</h2>
+            <h2>Donate TEST</h2>
             <button type="button" onClick={connectWallet} disabled={connectingWallet}>
               {walletAddress
                 ? `Vi: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
@@ -313,7 +315,7 @@ export function CreatorProfilePage() {
               name="amount"
               min="0.0001"
               step="0.0001"
-              placeholder="So tien ETH"
+              placeholder="So tien TEST"
               value={form.amount}
               onChange={onFieldChange}
             />
@@ -333,7 +335,7 @@ export function CreatorProfilePage() {
                 <li key={donation._id}>
                   <div className="message-head">
                     <strong>{donation.name || "Anonymous"}</strong>
-                    <span>{donation.amount} ETH</span>
+                    <span>{donation.amount} TEST</span>
                   </div>
                   <p>{donation.message || "Khong co loi nhan."}</p>
                   <small>{formatDate(donation.createdAt)}</small>

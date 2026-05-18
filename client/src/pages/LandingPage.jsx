@@ -84,7 +84,7 @@ export function LandingPage() {
       setPage(nextPage);
       pageRef.current = nextPage;
     } catch (requestError) {
-      setError(requestError.message || "Khong the tai danh sach creator.");
+      setError(requestError.message || "Không thể tải danh sách creator.");
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -117,7 +117,7 @@ export function LandingPage() {
       })
       .catch((requestError) => {
         if (isCancelled) return;
-        setSearchError(requestError.message || "Khong tim kiem duoc creator.");
+        setSearchError(requestError.message || "Không tìm kiếm được creator.");
       })
       .finally(() => {
         if (isCancelled) return;
@@ -159,7 +159,7 @@ export function LandingPage() {
   if (loading && creators.length === 0) {
     return (
       <main className="landing-page">
-        <LoadingSpinner label="Dang tai creators..." />
+        <LoadingSpinner label="Đang tải creators..." />
       </main>
     );
   }
@@ -170,13 +170,18 @@ export function LandingPage() {
 
       <section className="landing-content">
         <p className="landing-kicker">Buy Me A Coffee</p>
-        <h1>Hon 1,000+ nha sang tao hang dau dang tham gia</h1>
+        <div className="landing-top-actions">
+          <button type="button" onClick={() => navigate("/")}>
+            Xem hướng dẫn donate
+          </button>
+        </div>
+        <h1>Hơn 1,000+ nhà sáng tạo hàng đầu đang tham gia</h1>
 
         {error ? (
           <div className="landing-error">
             <p>{error}</p>
             <button type="button" onClick={() => loadCreators(1)}>
-              Thu lai
+              Thử lại
             </button>
           </div>
         ) : (
@@ -187,24 +192,24 @@ export function LandingPage() {
                   type="text"
                   value={searchInput}
                   onChange={(event) => setSearchInput(event.target.value)}
-                  placeholder="Tim creator de donate... (VD: H, Hi, Him)"
+                  placeholder="Tìm creator để donate... (VD: H, Hi, Him)"
                 />
                 {searchInput && (
                   <button type="button" onClick={() => setSearchInput("")}>
-                    Xoa
+                    Xóa
                   </button>
                 )}
               </div>
 
               {debouncedSearch && (
                 <section className="search-result-panel">
-                  <h2>Ket qua tim kiem</h2>
+                  <h2>Kết quả tìm kiếm</h2>
                   {searchLoading ? (
-                    <p>Dang tim creator...</p>
+                    <p>Đang tìm creator...</p>
                   ) : searchError ? (
                     <p>{searchError}</p>
                   ) : searchResults.length === 0 ? (
-                    <p>Khong co creator bat dau bang "{debouncedSearch}".</p>
+                    <p>Không có creator bắt đầu bằng "{debouncedSearch}".</p>
                   ) : (
                     <ul>
                       {searchResults.map((creator) => (
@@ -216,7 +221,7 @@ export function LandingPage() {
                             <img src={creator.avatar} alt={creator.name} loading="lazy" />
                             <div>
                               <strong>{creator.name}</strong>
-                              <span>{creator.followersCount} theo doi</span>
+                              <span>{creator.followersCount} theo dõi</span>
                             </div>
                           </button>
                         </li>
@@ -247,7 +252,7 @@ export function LandingPage() {
                           <img src={creator.avatar} alt={creator.name} loading="lazy" />
                           <div>
                             <h3>{creator.name}</h3>
-                            <p>{creator.followersCount} theo doi</p>
+                            <p>{creator.followersCount} theo dõi</p>
                           </div>
                         </button>
                       ))}
@@ -260,15 +265,15 @@ export function LandingPage() {
         )}
         
         <div ref={sentinelRef} className="landing-sentinel" />
-        {loadingMore && <LoadingSpinner label="Dang tai them creators..." />}
+        {loadingMore && <LoadingSpinner label="Đang tải thêm creators..." />}
 
         <section className="quick-donate-cta">
-          <h2>Creator chua dang ky?</h2>
+          <h2>Creator chưa đăng ký?</h2>
           <p>
-            Ban van co the donate truc tiep bang cach nhap dia chi vi nguoi nhan.
+            Bạn vẫn có thể donate trực tiếp bằng cách nhập địa chỉ ví người nhận.
           </p>
           <button type="button" onClick={() => navigate("/quick-donate")}>
-            Donate den dia chi bat ky
+            Donate đến địa chỉ bất kỳ
           </button>
         </section>
       </section>

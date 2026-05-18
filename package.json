@@ -9,6 +9,8 @@
     "server": "node server/src/index.js",
     "server:memory": "node server/src/index.memory.js",
     "seed": "node server/src/seed.js",
+    "compile": "npx hardhat compile",
+    "deploy:sapphire-testnet": "npx hardhat compile && node scripts/deploy-sapphire-testnet.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
